@@ -1,0 +1,8 @@
+fastapi==0.68.0
+uvicorn==0.15.0
+python-multipart==0.0.5
+Pillow  # Use the latest version which has pre-compiled wheels
+numpy==1.21.0
+tensorflow==2.3.0
+torch==1.10.0
+torchvision==0.11.1

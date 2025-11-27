@@ -1,0 +1,37 @@
+Of course. Here is a detailed summary report formatted for municipal authorities.
+
+***
+
+### **Civic Complaint Summary Report**
+
+**Case ID:** [SYSTEM-GENERATED ID: PENDING]
+**Date of Report:** November 25, 2025
+**Subject:** Streetlight Outage at 123 Main Street
+
+---
+
+**1. Summary of Issue**
+
+A civic complaint has been filed regarding a non-operational streetlight located at 123 Main Street. The reporting party states the light is "completely dark," indicating a full malfunction. The issue is situated in an urban area, where functional street lighting is essential for public safety, pedestrian visibility, and traffic security during nighttime hours.
+
+**2. Report Details**
+
+*   **Date Reported:** 24 November 2025
+*   **Time Reported:** 10:00:14 PM
+
+**3. Key Issue Information**
+
+*   **Issue Type:** Streetlight Malfunction
+*   **Description:** The streetlight at the specified location is not emitting any light and requires repair.
+*   **Location:** 123 Main Street, New York, NY 10001
+*   **Area Type:** Urban
+
+**4. Recommended Department Assignment**
+
+This issue falls under the purview of public infrastructure maintenance. It is recommended that this report be routed to the **Department of Transportation (DOT)**, specifically the division responsible for street lighting installation and maintenance.
+
+**5. Suggested Priority Level**
+
+*   **Priority Level: Medium**
+
+**Justification:** A "Medium" priority is recommended, aligning with the reported severity. While a single outage is not a city-wide critical emergency, a non-functional streetlight in a populated urban area poses a potential safety hazard to pedestrians and drivers. This priority level warrants timely dispatch of a maintenance crew for inspection and repair but does not necessitate an immediate emergency response.

@@ -1,0 +1,47 @@
+Of course. Here is a detailed summary report based on the provided civic complaint, formatted for municipal authorities.
+
+***
+
+### **CIVIC COMPLAINT SUMMARY REPORT**
+
+**Reference ID:** SL-MYS-20251127-01
+**Date of Report:** November 27, 2025
+**Subject:** Summary and Recommendation for Street Light Failure Complaint in Hebbalu
+
+---
+
+This report provides a summary and initial assessment of a civic complaint received regarding a street light malfunction. The details are outlined below for review and assignment.
+
+#### **1. Summary of Issue Classification**
+
+The complaint pertains to a non-functional public street asset. It has been officially classified under the category of **Street Light Failure**, indicating a complete or partial outage of a municipal street lamp.
+
+#### **2. Date and Time of Report**
+
+*   **Date Reported:** November 27, 2025
+*   **Time Reported:** 9:02:55 PM
+
+#### **3. Key Issue Details**
+
+*   **Title:** Street Light - Lighting Failure
+*   **Description:** The issue is described as a "lighting failure problem" that requires immediate assessment and action. It is important to note that while the system classified the overall severity as "low," the text description refers to it as a "medium severity" issue.
+*   **Location:** The reported location of the malfunctioning street light is:
+    *   **Area:** Hebbalu
+    *   **City:** Mysuru
+    *   **District:** Mysuru District
+    *   **State:** Karnataka
+    *   **Pincode:** 570001
+
+#### **4. Recommended Department for Action**
+
+The nature of this complaint falls directly under the purview of the municipal body responsible for public infrastructure maintenance.
+
+*   **Recommended Department:** **Public Works Department - Street Lighting and Electrical Maintenance Division**
+
+#### **5. Suggested Priority Level**
+
+Based on the provided information, the following priority level is suggested:
+
+*   **Priority Level:** **Standard**
+
+**Justification:** The system's automated classification indicates a "low" severity. However, the citizen's description mentions "medium severity" and a need for immediate assessment. Therefore, while it should be entered into the standard maintenance queue, the dispatch team should review the specific location (e.g., if it's a critical intersection or a poorly lit area) to determine if an escalation to a higher priority is warranted.

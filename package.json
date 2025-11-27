@@ -1,0 +1,12 @@
+{
+  "name": "civic-connect",
+  "version": "1.0.0",
+  "description": "Civic Connect Application",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd client && npm run dev",
+    "build": "cd client && npm run build"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: civic_connect_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: civic_connect
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: civic_user
+      MYSQL_PASSWORD: civic_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - civic_network
+
+  # Backend API
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: civic_connect_api
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=civic_user
+      - DB_PASSWORD=civic_password
+      - DB_NAME=civic_connect
+      - JWT_SECRET=civic_jwt_secret_here
+      - NODE_ENV=production
+    depends_on:
+      - db
+    networks:
+      - civic_network
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  # Frontend Client
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: civic_connect_client
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+    depends_on:
+      - api
+    networks:
+      - civic_network
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+
+  # ML Model Service
+  ml-service:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    container_name: civic_connect_ml_service
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - civic_network
+    volumes:
+      - ./ml-service:/app
+      - /app/node_modules
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: civic_connect_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - client
+      - api
+    networks:
+      - civic_network
+
+volumes:
+  db_data:
+
+networks:
+  civic_network:
+    driver: bridge
