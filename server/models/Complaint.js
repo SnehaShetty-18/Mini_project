@@ -38,6 +38,22 @@ const Complaint = sequelize.define('Complaint', {
     type: DataTypes.STRING(300),
     allowNull: true // Allow null values for image_url
   },
+  latitude: {
+    type: DataTypes.DECIMAL(10, 8),
+    allowNull: false
+  },
+  longitude: {
+    type: DataTypes.DECIMAL(11, 8),
+    allowNull: false
+  },
+  address: {
+    type: DataTypes.STRING(300),
+    allowNull: true
+  },
+  city: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
   location_text: {
     type: DataTypes.STRING(255),
     allowNull: false
@@ -48,6 +64,18 @@ const Complaint = sequelize.define('Complaint', {
   region: {
     type: DataTypes.STRING(150),
     allowNull: false
+  },
+  report_url: {
+    type: DataTypes.STRING(300),
+    allowNull: true
+  },
+  escalation_time: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  upvotes: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
   },
   upvote_count: {
     type: DataTypes.INTEGER,

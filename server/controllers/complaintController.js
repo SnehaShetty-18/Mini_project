@@ -11,10 +11,6 @@ const { getDetailedLocationInfo } = require('../services/locationService');
 // @access  Private
 exports.createComplaint = async (req, res) => {
   try {
-    console.log('Creating complaint with request body:', req.body);
-    console.log('User from auth middleware:', req.user);
-    console.log('File from upload middleware:', req.file);
-    
     // Updated to match client-side field names
     const { title, description, issue_type, severity_level, latitude, longitude, address, place_name, district, state, country } = req.body;
     const userId = req.user ? req.user.id : null;
@@ -120,8 +116,6 @@ exports.createComplaint = async (req, res) => {
       updated_at: new Date()
     });
 
-    console.log('Complaint created successfully:', complaint.toJSON());
-
     // Send notification to municipal office
     try {
       await sendNotification(complaint);
@@ -135,10 +129,22 @@ exports.createComplaint = async (req, res) => {
     });
   } catch (error) {
     console.error('Complaint creation error:', error);
-    if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).json({ message: 'Validation error: ' + error.message });
+    if (error.name === 'SequelizeValidationError') {
+      const validationErrors = error.errors.map(err => err.message).join(', ');
+      return res.status(400).json({ 
+        message: 'Validation error', 
+        errors: validationErrors 
+      });
     }
-    res.status(500).json({ message: 'Server error: ' + error.message });
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(400).json({ 
+        message: 'A similar complaint already exists' 
+      });
+    }
+    res.status(500).json({ 
+      message: 'Failed to create complaint. Please try again later.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -158,8 +164,11 @@ exports.getComplaints = async (req, res) => {
 
     res.json(complaints);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Failed to fetch complaints:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch complaints',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -175,8 +184,11 @@ exports.getUserComplaints = async (req, res) => {
 
     res.json(complaints);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Failed to fetch user complaints:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch your complaints',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -199,8 +211,11 @@ exports.getComplaint = async (req, res) => {
 
     res.json(complaint);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Failed to fetch complaint:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch complaint details',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -209,40 +224,61 @@ exports.getComplaint = async (req, res) => {
 // @access  Private (Officers only)
 exports.updateComplaintStatus = async (req, res) => {
   try {
-    const { status, notes } = req.body;
+    // Accept both 'status' and 'new_status' for compatibility
+    const { status, new_status, notes } = req.body;
+    const newStatusValue = new_status || status;
     const officerId = req.user.id;
+
+    if (!newStatusValue) {
+      return res.status(400).json({ message: 'Status is required' });
+    }
 
     const complaint = await Complaint.findByPk(req.params.id);
     if (!complaint) {
       return res.status(404).json({ message: 'Complaint not found' });
     }
 
+    const oldStatus = complaint.status;
+
     // Update complaint status
-    complaint.status = status;
+    complaint.status = newStatusValue;
+    complaint.updated_at = new Date();
     await complaint.save();
 
     // Create status history
     const ComplaintStatus = require('../models/ComplaintStatus');
     await ComplaintStatus.create({
-      complaintId: complaint.id,
-      status,
+      complaintId: complaint.complaint_id,
+      oldStatus: oldStatus,
+      newStatus: newStatusValue,
+      status: newStatusValue,
       updatedBy: officerId,
-      notes
+      notes: notes || ''
     });
 
     // Emit real-time update
     const io = req.app.get('socketio');
-    io.to(`complaint_${complaint.id}`).emit('statusUpdate', {
-      complaintId: complaint.id,
-      status,
-      notes,
-      updatedAt: new Date()
-    });
+    if (io) {
+      io.to(`complaint_${complaint.complaint_id}`).emit('statusUpdate', {
+        complaintId: complaint.complaint_id,
+        status: newStatusValue,
+        oldStatus: oldStatus,
+        notes,
+        updatedAt: new Date()
+      });
+    }
 
-    res.json(complaint);
+    res.json({
+      success: true,
+      complaint: complaint,
+      message: `Status updated to ${newStatusValue}`
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Failed to update complaint status:', error);
+    res.status(500).json({ 
+      message: 'Failed to update complaint status',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -281,8 +317,11 @@ exports.upvoteComplaint = async (req, res) => {
       return res.json({ message: 'Upvoted', upvotes: complaint.upvotes });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Failed to upvote complaint:', error);
+    res.status(500).json({ 
+      message: 'Failed to upvote complaint',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -306,8 +345,11 @@ exports.getCommunityFeed = async (req, res) => {
 
     res.json(complaints);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Failed to fetch community feed:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch community feed',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -337,7 +379,64 @@ exports.getComplaintsByCity = async (req, res) => {
 
     res.json(complaints);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Failed to fetch complaints by city:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch city complaints',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// @desc    Get status history for a complaint
+// @route   GET /api/complaints/:id/status-history
+// @access  Private
+exports.getStatusHistory = async (req, res) => {
+  try {
+    const ComplaintStatus = require('../models/ComplaintStatus');
+    const Admin = require('../models/Admin');
+    const User = require('../models/User');
+    
+    const history = await ComplaintStatus.findAll({
+      where: { complaintId: req.params.id },
+      order: [['changedAt', 'DESC']]
+    });
+    
+    // Format the response
+    const formattedHistory = await Promise.all(history.map(async (record) => {
+      let updaterName = 'System';
+      
+      if (record.updatedBy) {
+        // Try to find admin first
+        const admin = await Admin.findByPk(record.updatedBy);
+        if (admin) {
+          updaterName = admin.name;
+        } else {
+          // Try to find regular user
+          const user = await User.findByPk(record.updatedBy);
+          if (user) {
+            updaterName = user.name;
+          }
+        }
+      }
+      
+      return {
+        status_id: record.status_id,
+        complaint_id: record.complaintId,
+        admin_id: record.updatedBy,
+        old_status: record.oldStatus || 'N/A',
+        new_status: record.newStatus || record.status,
+        changed_at: record.changedAt,
+        admin_name: updaterName,
+        notes: record.notes
+      };
+    }));
+    
+    res.json(formattedHistory);
+  } catch (error) {
+    console.error('Failed to fetch status history:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch status history',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };

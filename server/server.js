@@ -9,13 +9,6 @@ const { scheduleOverdueCheck } = require('./services/cronJobs');
 const { setupComplaintSockets } = require('./sockets/complaintSocket');
 const path = require('path');
 
-// Debug: Print current working directory
-console.log('Current working directory:', process.cwd());
-console.log('Server.js location:', __dirname);
-
-// Load environment variables
-dotenv.config();
-
 // Connect to database
 connectDB();
 

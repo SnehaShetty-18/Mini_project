@@ -7,7 +7,8 @@ const {
   upvoteComplaint,
   getUserComplaints,
   getCommunityFeed,
-  getComplaintsByCity
+  getComplaintsByCity,
+  getStatusHistory
 } = require('../controllers/complaintController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
@@ -24,6 +25,7 @@ router.route('/')
 
 router.get('/my-complaints', protect, getUserComplaints);
 router.get('/city/:city', protect, authorize('officer', 'admin'), getComplaintsByCity);
+router.get('/:id/status-history', protect, getStatusHistory);
 router.get('/:id', protect, getComplaint);
 
 // Officer routes

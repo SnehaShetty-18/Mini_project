@@ -5,9 +5,10 @@ Final cleanup script to remove the Garbage directory
 
 import shutil
 from pathlib import Path
+import os
 
-# Use absolute path
-BASE_DIR = Path("e:/mini/civic-connect")
+# Use relative path based on script location
+BASE_DIR = Path(__file__).parent.parent
 
 def remove_garbage_directory():
     """Remove the Garbage directory"""

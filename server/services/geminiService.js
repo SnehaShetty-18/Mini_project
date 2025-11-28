@@ -77,9 +77,9 @@ Please provide a professional summary that includes:
 
 Format the response in a clear, professional manner suitable for municipal authorities.`;
 
-    // Make API call to Gemini using the correct model
+    // Make API call to Gemini using the correct model (gemini-1.5-flash is the current stable version)
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent?key=${config.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${config.GEMINI_API_KEY}`,
       {
         contents: [{
           parts: [{
